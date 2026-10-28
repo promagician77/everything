@@ -1,0 +1,7 @@
+{
+  "name": "everything-routes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Three design routes for the Everything Network website, with the Framer build plan behind them.",
+  "scripts": { "dev": "npx --yes serve . -l 3000", "start": "npx --yes serve . -l 3000" }
+}

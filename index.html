@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Everything Routes</title>
+  <meta name="description" content="Three distinct design routes for the Everything Network website, shown live, with the Framer build plan, hero imagery treatment, migration risk and CMS structure behind them.">
+  <meta name="robots" content="noindex">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Everything Routes">
+  <meta property="og:description" content="Three distinct design routes for the Everything Network website, shown live, with the Framer build plan, hero imagery treatment, migration risk and CMS structure behind them.">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B5CE6'/%3E%3Cpath d='M6 23C10 23 11 9 16 9s6 14 10 14' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    /* Document skeleton. The artifact runtime supplies these; a standalone
+       deploy declares them itself. [hidden] is load-bearing: the tab panels
+       are toggled with el.hidden. */
+    :root{
+      color-scheme: light;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html{ -webkit-text-size-adjust: 100%; }
+    body{ margin: 0; }
+    img{ max-width: 100%; }
+    [hidden]{ display: none !important; }
+  </style>
+  <style>
+/* Layout: a presentation deck that runs. Chrome follows the viewer's theme;
+   the route previews stay on a light ground because the brief requires it. */
+:root{
+  --paper:#F2F3F4; --surface:#FFFFFF; --sunk:#E8EAEC;
+  --ink:#16181C; --dim:#5A5E68; --faint:#8A8F99;
+  --line:#DEE0E4; --line2:#C3C6CC;
+  --accent:#1B3A6B;
+  --ok:#27694C; --warn:#9A6714; --no:#A3344A;
+
+  /* route accents, redefined live by the switcher */
+  --r-accent:#1B3A6B; --r-accent2:#4A6FA8; --r-wash1:#1B3A6B; --r-wash2:#4A6FA8;
+
+  --display:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --body:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --paper:#101215; --surface:#181B20; --sunk:#14161A;
+  --ink:#ECEEF1; --dim:#9BA0AA; --faint:#6C7179;
+  --line:#272A30; --line2:#3A3E46;
+  --accent:#7FA3DC; --ok:#45B382; --warn:#D09B38; --no:#E26A80;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#101215; --surface:#181B20; --sunk:#14161A;
+  --ink:#ECEEF1; --dim:#9BA0AA; --faint:#6C7179;
+  --line:#272A30; --line2:#3A3E46;
+  --accent:#7FA3DC; --ok:#45B382; --warn:#D09B38; --no:#E26A80;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--surface)}
+.wrap{max-width:1180px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.masthead{position:sticky;top:env(safe-area-inset-top,0px);z-index:19;background:var(--surface);border-bottom:1px solid var(--line)}
+.mast-in{display:flex;align-items:center;gap:14px;padding-block:13px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-size:22px;margin:0;letter-spacing:.01em}
+.tagline{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.tbtn{margin-left:auto;font-family:var(--body);font-size:12.5px;font-weight:500;background:var(--sunk);
+  color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+.tbtn:hover{color:var(--ink);border-color:var(--line2)}
+
+.rail{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);background:var(--surface);
+  position:sticky;top:calc(env(safe-area-inset-top,0px) + 55px);z-index:18}
+.rail-in{display:flex;gap:2px}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;cursor:pointer;
+  padding:12px 15px 10px;font-family:var(--body);font-size:13.5px;font-weight:500;color:var(--dim);white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab em{font-family:var(--mono);font-style:normal;font-size:9.5px;color:var(--faint);margin-left:6px;vertical-align:1px}
+.tab[aria-selected="true"] em{color:var(--accent)}
+
+main{padding-block:26px 40px}
+.lede{max-width:66ch;margin:0 0 20px}
+.lede h2{font-family:var(--display);font-size:clamp(25px,4vw,36px);line-height:1.12;margin:0 0 8px;text-wrap:balance;letter-spacing:.005em}
+.lede p{margin:0;color:var(--dim);font-size:14.5px}
+
+.note{display:flex;gap:11px;background:var(--surface);border:1px solid var(--line);
+  border-left:3px solid var(--warn);border-radius:7px;padding:12px 15px;margin-bottom:20px;font-size:13.5px}
+.note.good{border-left-color:var(--ok)} .note.bad{border-left-color:var(--no)}
+.note strong{color:var(--warn);font-weight:600;white-space:nowrap}
+.note.good strong{color:var(--ok)} .note.bad strong{color:var(--no)}
+.note p{margin:0;color:var(--dim)}
+
+/* ---------- route switcher ---------- */
+.routes{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:20px}
+@media (max-width:760px){ .routes{grid-template-columns:1fr} }
+.rcard{appearance:none;text-align:left;cursor:pointer;font-family:inherit;width:100%;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:15px 16px}
+.rcard:hover{border-color:var(--line2)}
+.rcard[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.rcard .rn{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:6px}
+.rcard h3{font-family:var(--display);font-size:21px;margin:0 0 5px;line-height:1.15}
+.rcard p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.45}
+.swatch{display:flex;gap:4px;margin-top:11px}
+.swatch i{width:22px;height:7px;border-radius:4px;display:block}
+
+/* the preview keeps the client's light ground in both themes, by brief */
+.preview{background:#FBFBFA;border:1px solid var(--line);border-radius:12px;overflow:hidden;color:#16181C}
+.pv-bar{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #E7E7E4;background:#F3F3F1}
+.pv-bar span{font-family:var(--mono);font-size:10px;color:#8A8F99}
+.pv-dot{width:8px;height:8px;border-radius:50%;background:#D6D6D2}
+.pv-nav{display:flex;align-items:center;gap:22px;padding:16px 28px;border-bottom:1px solid #EDEDEA}
+.pv-logo{font-family:var(--display);font-size:19px;letter-spacing:.01em}
+.pv-links{display:flex;gap:17px;margin-left:auto;font-size:12px;color:#5A5E68}
+@media (max-width:620px){ .pv-links{display:none} }
+.pv-cta{font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:999px;background:var(--r-accent);color:#fff}
+
+.hero{position:relative;min-height:330px;display:grid;align-content:center;gap:16px;padding:44px 28px}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .inner{position:relative;max-width:620px}
+.hero .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:13px;display:block}
+.hero h4{font-family:var(--display);margin:0 0 14px;line-height:1.06;letter-spacing:.005em}
+.hero p{margin:0 0 20px;line-height:1.5}
+.hero .btns{display:flex;gap:9px;flex-wrap:wrap}
+.hbtn{font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:999px;background:var(--r-accent);color:#fff}
+.hbtn.alt{background:transparent;border:1px solid var(--r-accent);color:var(--r-accent)}
+
+.rmeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;overflow:hidden}
+.rmeta div{background:var(--surface);padding:12px 15px}
+.rmeta .l{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:4px}
+.rmeta .v{font-size:12.5px;color:var(--ink)}
+
+/* ---------- controls ---------- */
+.lab{display:grid;grid-template-columns:304px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:880px){ .lab{grid-template-columns:1fr} }
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:17px}
+.panel h3{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:500;margin:0 0 13px}
+.ctl{margin-bottom:15px}.ctl:last-child{margin-bottom:0}
+.ctl-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:10px}
+.ctl-h label{font-size:12.5px;font-weight:500}
+.ctl-h output{font-family:var(--mono);font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+select{width:100%;font-family:var(--body);font-size:13px;padding:8px 9px;border-radius:7px;border:1px solid var(--line);background:var(--sunk);color:var(--ink)}
+:where(button,select,input,a):focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+.stage{background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:17px}
+.stage-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:13px}
+.stage-h h3{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:500;margin:0}
+.stage-h .k{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+#washWrap{position:relative;border-radius:9px;overflow:hidden;background:#111;aspect-ratio:16/7}
+#washWrap canvas{width:100%;height:100%;display:block}
+#washWrap .ov{position:absolute;left:20px;bottom:18px;right:20px;color:#fff}
+#washWrap .ov b{font-family:var(--display);font-size:clamp(19px,3.4vw,30px);font-weight:400;display:block;line-height:1.1}
+#washWrap .ov span{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.82}
+
+/* ---------- tables ---------- */
+.tbl-w{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:9px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface)}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+  font-weight:500;padding:10px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td code{font-family:var(--mono);font-size:11.5px;background:var(--sunk);padding:2px 6px;border-radius:4px}
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.pill.no{background:color-mix(in srgb,var(--no) 15%,transparent);color:var(--no)}
+.pill.mid{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+
+.steps{display:grid;gap:9px}
+.step{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;background:var(--surface);
+  border:1px solid var(--line);border-radius:9px;padding:13px 15px}
+.step .n{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent);background:var(--sunk);
+  border-radius:7px;display:grid;place-items:center;height:26px}
+.step b{display:block;font-size:13px;margin-bottom:3px}
+.step p{margin:0;font-size:12.5px;color:var(--dim)}
+
+.foot{border-top:1px solid var(--line);margin-top:32px;padding-block:20px 10px;color:var(--faint);
+  font-family:var(--mono);font-size:10.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap mast-in">
+    <h1 class="brand">Everything Routes</h1>
+    <span class="tagline">three directions, and the build behind them</span>
+    <button class="tbtn" id="theme" type="button">Theme</button>
+  </div>
+</header>
+
+<div class="rail"><div class="wrap rail-in" role="tablist" aria-label="Sections">
+  <button class="tab" role="tab" aria-selected="true"  aria-controls="p1" id="t1" type="button">Routes<em>01</em></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p2" id="t2" type="button">Imagery<em>02</em></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p3" id="t3" type="button">Framer<em>03</em></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p4" id="t4" type="button">Migration<em>04</em></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p5" id="t5" type="button">Editing<em>05</em></button>
+</div></div>
+
+<main class="wrap">
+
+<!-- ============ 01 ROUTES ============ -->
+<section id="p1" role="tabpanel" aria-labelledby="t1">
+  <div class="lede">
+    <h2>Three routes, and they are actually different</h2>
+    <p>Not three colourways of one layout. Each one changes what the page leads with, how motion behaves
+       and what the first screen asks of you. Click a route to rebuild the preview underneath.</p>
+  </div>
+
+  <div class="note"><strong>Stand-ins</strong>
+    <p>Headlines are your approved copy. Display type is Instrument Serif standing in for Domaine, which
+       ships as a licensed file at build. Hero art is generated here, not your footage.</p></div>
+
+  <div class="routes" id="routeCards"></div>
+
+  <div class="preview">
+    <div class="pv-bar"><span class="pv-dot"></span><span id="pvUrl">everythingconference.org</span></div>
+    <div class="pv-nav">
+      <span class="pv-logo">Everything</span>
+      <span class="pv-links"><span>Conference</span><span>Train</span><span>Inspire</span><span>What</span><span>Who</span></span>
+      <span class="pv-cta">Book</span>
+    </div>
+    <div class="hero" id="hero">
+      <canvas id="heroArt"></canvas>
+      <div class="inner">
+        <span class="eyebrow" id="hEyebrow">Cultural renewal</span>
+        <h4 id="hHead">Be equipped to make a difference in our world</h4>
+        <p id="hSub">A UK network connecting and equipping leaders across every sector of society.</p>
+        <div class="btns">
+          <span class="hbtn">Book the Conference</span>
+          <span class="hbtn alt">Apply to the ELDC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rmeta" id="rmeta"></div>
+</section>
+
+<!-- ============ 02 IMAGERY ============ -->
+<section id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+  <div class="lede">
+    <h2>A hero that cannot show a half-empty room</h2>
+    <p>Your note about the conference hall is the right instinct. The fix is not a wider lens, it is to stop
+       using the room as the subject. Treat the footage as light and keep the people legible inside it.</p>
+  </div>
+
+  <div class="lab">
+    <div class="panel">
+      <h3>Wash</h3>
+      <div class="ctl">
+        <div class="ctl-h"><label for="hue">Colour</label><output id="hueO">14&deg;</output></div>
+        <input type="range" id="hue" min="0" max="360" step="1" value="14">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="spread">Spread</label><output id="spreadO">22</output></div>
+        <input type="range" id="spread" min="10" max="70" step="1" value="22">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="figure">Figures</label><output id="figureO">62%</output></div>
+        <input type="range" id="figure" min="0" max="100" step="1" value="62">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="grain">Grain</label><output id="grainO">16%</output></div>
+        <input type="range" id="grain" min="0" max="40" step="1" value="16">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="crowd">Crowd</label><output id="crowdO">9</output></div>
+        <input type="range" id="crowd" min="3" max="18" step="1" value="9">
+      </div>
+      <div class="note" style="margin:16px 0 0"><strong>Why</strong>
+        <p>Push Figures to zero and it becomes abstract wallpaper. Push it high and it is a photo of a room
+           again. The brand lives between those two.</p></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><h3>Hero plate</h3><span class="k">generated placeholder</span></div>
+      <div id="washWrap">
+        <canvas id="wash"></canvas>
+        <div class="ov">
+          <span>Everything Conference &middot; London</span>
+          <b>Be equipped to make a difference in our world</b>
+        </div>
+      </div>
+      <div class="steps" style="margin-top:15px">
+        <div class="step"><span class="n">1</span><div><b>Figures stay recognisable, faces do not</b>
+          <p>Enough human form to read as people, not enough to date the photography or to need a model
+             release for a stranger in row four.</p></div></div>
+        <div class="step"><span class="n">2</span><div><b>The wash carries the brand, not a filter</b>
+          <p>Gradient fields sampled from the identity. One colour per page section, so Conference and
+             Train feel related without repeating a picture.</p></div></div>
+        <div class="step"><span class="n">3</span><div><b>Motion is the light moving, nothing flying in</b>
+          <p>A slow drift on the gradient. In Framer this is one component with a long loop, which stays
+             cheap on mobile because it animates transform and opacity only.</p></div></div>
+        <div class="step"><span class="n">4</span><div><b>It degrades to a still</b>
+          <p>Under reduced motion, and as the LCP image on a slow connection, the first frame is already
+             the composition. Nothing waits for video to load.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 FRAMER ============ -->
+<section id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+  <div class="lede">
+    <h2>What Framer does, and what it needs help with</h2>
+    <p>Framer is the right call for this site. It is also not a commerce platform, and the honest version
+       of the build plan says so on the first page rather than in month two.</p>
+  </div>
+
+  <div class="tbl-w" style="margin-top:0"><table>
+    <thead><tr><th>Requirement</th><th>In Framer</th><th>How it actually works</th></tr></thead>
+    <tbody>
+      <tr><td><b>Custom type</b> (Domaine, Inter)</td><td><span class="pill ok">Native</span></td>
+        <td>Custom fonts upload directly. Check the Domaine licence covers web use and the traffic band before launch.</td></tr>
+      <tr><td><b>Gradients, scroll and motion</b></td><td><span class="pill ok">Native</span></td>
+        <td>Framer's strength. Budget it: animate transform and opacity, not layout properties, or mobile suffers.</td></tr>
+      <tr><td><b>CMS for speakers, talks, FAQs</b></td><td><span class="pill ok">Native</span></td>
+        <td>Collections plus components. Structure it once, properly, because restructuring later rewrites every page that binds to it.</td></tr>
+      <tr><td><b>YouTube video library</b></td><td><span class="pill ok">Native</span></td>
+        <td>CMS collection holding the YouTube ID, title and subject label. Facade thumbnail first, iframe only on click, or the embeds dominate your load time.</td></tr>
+      <tr><td><b>Mailing list, contact form</b></td><td><span class="pill ok">Native</span></td>
+        <td>Framer forms, posted on to Beacon.</td></tr>
+      <tr><td><b>Ticket sales with early-bird</b></td><td><span class="pill no">Not native</span></td>
+        <td>Framer has no checkout. Early-bird is an inventory problem, not a payments one: it needs quantity caps and a cut-off date. A ticketing platform handles that; a plain payment link does not.</td></tr>
+      <tr><td><b>Online giving</b></td><td><span class="pill no">Not native</span></td>
+        <td>Separate from ticketing. UK giving wants Gift Aid capture and recurring donations, which a generic checkout will not collect.</td></tr>
+      <tr><td><b>Beacon CRM</b></td><td><span class="pill mid">Via API or Zapier</span></td>
+        <td>The Beacon API key is issued by their support rather than self-serve, and the Zapier route needs a Standard plan or above. Request it in week one; it is a scheduling dependency, not a build task.</td></tr>
+      <tr><td><b>ELDC applications, open or closed</b></td><td><span class="pill mid">CMS plus form</span></td>
+        <td>A CMS field drives the status so the team flips it themselves. The form itself can stay in Framer if the questions are short, or go to a form tool if it needs files.</td></tr>
+      <tr><td><b>Redirects</b></td><td><span class="pill ok">Native</span></td>
+        <td>Framer supports redirects. See the Migration tab for the one that actually matters here.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note bad" style="margin-top:18px"><strong>The one to decide early</strong>
+    <p>Tickets and giving are two different jobs. Tickets need inventory, tiers and a cut-off. Giving needs
+       Gift Aid and recurring. Trying to serve both with one tool is where this kind of build usually goes
+       wrong, and the decision belongs in stage one, not stage three.</p></div>
+</section>
+
+<!-- ============ 04 MIGRATION ============ -->
+<section id="p4" role="tabpanel" aria-labelledby="t4" hidden>
+  <div class="lede">
+    <h2>The redirect that cannot save you</h2>
+    <p>Your page table says the new Conference page is "similar to the current home". That sentence is the
+       whole migration risk, and it is worth deciding on deliberately rather than discovering it after launch.</p>
+  </div>
+
+  <div class="note bad"><strong>What happens</strong>
+    <p>Today your homepage is the conference page. In the new structure the homepage becomes a general
+       introduction and the conference content moves elsewhere. The URL keeps its history but changes
+       subject, and the content that earned that history arrives at an address with none.</p></div>
+
+  <div class="tbl-w" style="margin-top:0"><table>
+    <thead><tr><th>Today</th><th>Becomes</th><th>Handling</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code> conference content</td><td><code>/</code> general introduction</td>
+        <td><span class="pill no">Decide, do not redirect</span> The URL stays, its subject changes. Either keep conference intent on the homepage or accept a reset on those queries and plan the recovery.</td></tr>
+      <tr><td><code>/new-conference</code> (unpublished)</td><td><code>/conference</code></td>
+        <td><span class="pill mid">Launch clean</span> Publish at the final address. Do not ship <code>/new-</code> prefixes to production and redirect them later.</td></tr>
+      <tr><td><code>/new-home</code> (unpublished)</td><td><code>/</code></td>
+        <td><span class="pill mid">Replace in place</span> Same point as above.</td></tr>
+      <tr><td><code>/eldc</code> (published, ranking)</td><td><code>/eldc</code></td>
+        <td><span class="pill ok">Keep the URL</span> It is live and earning. Rebuild the page, never move the address.</td></tr>
+      <tr><td><code>/inspire</code> (just published)</td><td><code>/inspire</code></td>
+        <td><span class="pill ok">Keep the URL</span> Too new to have equity, but no reason to move it.</td></tr>
+      <tr><td>Squarespace system URLs</td><td>Framer equivalents</td>
+        <td><span class="pill mid">Map every one</span> Crawl the live site before anything is switched off. The list is always longer than the sitemap.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="steps" style="margin-top:18px">
+    <div class="step"><span class="n">1</span><div><b>Crawl and freeze the current site first</b>
+      <p>Every live URL, its title and its inbound links, captured before the migration starts. This is the
+         only chance to take that snapshot.</p></div></div>
+    <div class="step"><span class="n">2</span><div><b>New pages stay out of search until launch</b>
+      <p>You asked for this. Noindex while in review, removed deliberately on the day, not left on by
+         accident. It is the single most common launch mistake on a staged rebuild.</p></div></div>
+    <div class="step"><span class="n">3</span><div><b>One redirect map, reviewed before switchover</b>
+      <p>Old to new, every row justified. Redirect chains collapse to a single hop.</p></div></div>
+    <div class="step"><span class="n">4</span><div><b>Watch Search Console for six weeks after</b>
+      <p>Rankings move after a migration whatever you do. The difference between a dip and a problem is
+         whether someone is looking.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 05 EDITING ============ -->
+<section id="p5" role="tabpanel" aria-labelledby="t5" hidden>
+  <div class="lede">
+    <h2>What your team can change without me</h2>
+    <p>The test is not whether the site is editable. It is whether someone who has never opened Framer can
+       add a speaker on a Tuesday afternoon without breaking the layout.</p>
+  </div>
+
+  <div class="tbl-w" style="margin-top:0"><table>
+    <thead><tr><th>Collection</th><th>Fields</th><th>Who edits</th></tr></thead>
+    <tbody>
+      <tr><td><b>Speakers</b></td><td><code>Name</code> <code>Role</code> <code>Organisation</code> <code>Portrait</code> <code>Year</code> <code>Featured</code></td><td>Team, any time</td></tr>
+      <tr><td><b>Talks</b></td><td><code>Title</code> <code>YouTube_ID</code> <code>Subject</code> <code>Speaker_Ref</code> <code>Duration</code></td><td>Team, any time</td></tr>
+      <tr><td><b>Quotes</b></td><td><code>Quote</code> <code>Attribution</code> <code>Sector</code> <code>Show_On</code></td><td>Team, any time</td></tr>
+      <tr><td><b>FAQs</b></td><td><code>Question</code> <code>Answer</code> <code>Page</code> <code>Order</code></td><td>Team, any time</td></tr>
+      <tr><td><b>Key dates</b></td><td><code>Label</code> <code>Date</code> <code>Applies_To</code></td><td>Team, any time</td></tr>
+      <tr><td><b>ELDC status</b></td><td><code>Status</code> <code>Opens</code> <code>Closes</code> <code>Apply_URL</code></td><td>Team, any time</td></tr>
+      <tr><td>Page layout and type scale</td><td>Components and tokens</td><td><span class="pill mid">Me, or a developer</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note good" style="margin-top:18px"><strong>The design decision underneath</strong>
+    <p>Every block above is driven by a collection, so adding a speaker is filling a form, not laying out a
+       page. Where a layout would break with eight speakers instead of four, the component handles it, and
+       the team never has to know that was a risk.</p></div>
+
+  <div class="steps" style="margin-top:18px">
+    <div class="step"><span class="n">1</span><div><b>A written editing guide, built around their jobs</b>
+      <p>Not a tour of Framer. Six short entries: add a speaker, add a talk, change the ELDC status, update
+         a date, add an FAQ, swap a hero image.</p></div></div>
+    <div class="step"><span class="n">2</span><div><b>A short screen recording for each</b>
+      <p>Two or three minutes each. People watch these; they do not read manuals.</p></div></div>
+    <div class="step"><span class="n">3</span><div><b>One live session with whoever will actually edit</b>
+      <p>They do it while I watch, rather than watching me do it. Whatever they find confusing gets fixed
+         in the structure, not in the guide.</p></div></div>
+    <div class="step"><span class="n">4</span><div><b>Everything in your name from day one</b>
+      <p>Framer workspace, domain, Stripe or ticketing, Beacon connection. You own the accounts. I am a
+         collaborator who can be removed without anything breaking.</p></div></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap foot">
+  <span>Everything Routes &middot; prepared for Everything Network</span>
+  <span>placeholder art and stand-in display type</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s){return document.querySelector(s)};
+
+  try{ var st=localStorage.getItem('evr-theme'); if(st) document.documentElement.setAttribute('data-theme',st); }catch(e){}
+  $('#theme').addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var dark = cur ? cur==='dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+    var nx = dark?'light':'dark';
+    document.documentElement.setAttribute('data-theme',nx);
+    try{ localStorage.setItem('evr-theme',nx); }catch(e){}
+  });
+
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(o){
+        var sel=o===t;
+        o.setAttribute('aria-selected',sel?'true':'false');
+        document.getElementById(o.getAttribute('aria-controls')).hidden=!sel;
+      });
+      if(t.id==='t2') drawWash();
+      if(t.id==='t1') drawHero();
+    });
+  });
+
+  /* ---------------- routes ---------------- */
+  var ROUTES=[
+    { key:'convene', name:'Convene', idea:'The site is a table, not a stage: wide editorial pages, portraits at scale, and almost no motion until you arrive.',
+      accent:'#1B3A6B', accent2:'#5C7FB5', wash1:'#1B3A6B', wash2:'#8FA6C9',
+      eyebrow:'Cultural renewal', headSize:'clamp(30px,5vw,54px)', bodySize:'17px',
+      art:'calm', figures:0.30,
+      meta:[['Leads with','Type and portraits'],['Motion','One arrival sequence, then stillness'],['Imagery','Full-bleed portraits, little colour wash'],['Closest reference','Praxis']] },
+    { key:'light', name:'Light Through', idea:'Conference footage becomes colour-washed light with the people still inside it, so the first thing you feel is warmth rather than a venue.',
+      accent:'#A8406A', accent2:'#DE8A46', wash1:'#B4476F', wash2:'#E29A4B',
+      eyebrow:'Every sector of society', headSize:'clamp(31px,5.4vw,58px)', bodySize:'17px',
+      art:'wash', figures:0.62,
+      meta:[['Leads with','Atmosphere'],['Motion','The light drifts, nothing flies in'],['Imagery','Abstracted footage, figures legible'],['Closest reference','Redeemer CFW opening graphic']] },
+    { key:'noend', name:'No Single End', idea:'Renewal shown as a living index of sectors with no final rung, so the work reads as many hands rather than one ladder.',
+      accent:'#2B5B47', accent2:'#6E8F7E', wash1:'#2B5B47', wash2:'#A8BFB2',
+      eyebrow:'Artist, teacher, founder, lawyer, parent', headSize:'clamp(27px,4.4vw,46px)', bodySize:'16px',
+      art:'index', figures:0.42,
+      meta:[['Leads with','The range of people'],['Motion','The index cycles, sectors swap'],['Imagery','Many small portraits, one grid'],['Answers','Your Artist to Legislator note']] }
+  ];
+  var cur=0;
+
+  var cards=$('#routeCards');
+  ROUTES.forEach(function(r,i){
+    var b=document.createElement('button');
+    b.className='rcard'; b.type='button'; b.setAttribute('aria-pressed', i===0?'true':'false');
+    b.innerHTML='<span class="rn">Route 0'+(i+1)+'</span><h3>'+r.name+'</h3><p>'+r.idea+'</p>'+
+      '<span class="swatch"><i style="background:'+r.accent+'"></i><i style="background:'+r.accent2+'"></i><i style="background:'+r.wash2+'"></i></span>';
+    b.addEventListener('click',function(){ cur=i; applyRoute(); });
+    cards.appendChild(b);
+  });
+
+  function applyRoute(){
+    var r=ROUTES[cur], root=document.documentElement;
+    [].slice.call(cards.children).forEach(function(c,i){ c.setAttribute('aria-pressed', i===cur?'true':'false'); });
+    root.style.setProperty('--r-accent', r.accent);
+    root.style.setProperty('--r-accent2', r.accent2);
+    root.style.setProperty('--r-wash1', r.wash1);
+    root.style.setProperty('--r-wash2', r.wash2);
+    $('#hEyebrow').textContent=r.eyebrow;
+    $('#hEyebrow').style.color=r.accent;
+    $('#hHead').style.fontSize=r.headSize;
+    $('#hSub').style.fontSize=r.bodySize;
+    $('#rmeta').innerHTML=r.meta.map(function(m){
+      return '<div><span class="l">'+m[0]+'</span><span class="v">'+m[1]+'</span></div>'; }).join('');
+    drawHero();
+  }
+
+  /* hero art, per route */
+  function fit(c){
+    var r=c.getBoundingClientRect(), d=Math.min(2,window.devicePixelRatio||1);
+    c.width=Math.max(1,Math.round(r.width*d)); c.height=Math.max(1,Math.round(r.height*d));
+    var x=c.getContext('2d'); x.setTransform(d,0,0,d,0,0);
+    return {x:x,w:r.width,h:r.height};
+  }
+  function figures(x,w,h,n,alpha,col){
+    for(var i=0;i<n;i++){
+      var t=(i+0.5)/n, px=t*w, sc=0.55+((i*37)%100)/100*0.6;
+      var bh=h*0.46*sc, bw=bh*0.30, by=h*0.97;
+      x.globalAlpha=alpha*(0.55+((i*53)%100)/100*0.45);
+      x.fillStyle=col;
+      x.beginPath();
+      x.ellipse(px, by-bh*0.78, bw*0.33, bw*0.36, 0, 0, Math.PI*2); // head, overlapping the shoulders
+      x.fill();
+      x.beginPath();
+      x.moveTo(px-bw*0.52, by);
+      x.quadraticCurveTo(px-bw*0.58, by-bh*0.62, px, by-bh*0.66);
+      x.quadraticCurveTo(px+bw*0.58, by-bh*0.62, px+bw*0.52, by);
+      x.closePath(); x.fill();
+    }
+    x.globalAlpha=1;
+  }
+  function drawHero(){
+    var c=$('#heroArt'); if(!c) return;
+    var r=ROUTES[cur], f=fit(c), x=f.x, w=f.w, h=f.h;
+    x.clearRect(0,0,w,h);
+    if(r.art==='calm'){
+      var g=x.createLinearGradient(0,0,w,h);
+      g.addColorStop(0,'#FBFBFA'); g.addColorStop(1,r.wash2+'44');
+      x.fillStyle=g; x.fillRect(0,0,w,h);
+      figures(x,w,h,4,0.16,r.wash1);
+    } else if(r.art==='wash'){
+      var g2=x.createLinearGradient(0,h,w,0);
+      g2.addColorStop(0,r.wash1); g2.addColorStop(0.55,r.wash2); g2.addColorStop(1,'#FBF6EE');
+      x.fillStyle=g2; x.fillRect(0,0,w,h);
+      figures(x,w,h,9,0.30,'#2A1420');
+      var veil=x.createLinearGradient(0,0,w*0.8,0);
+      veil.addColorStop(0,'rgba(255,255,255,0.86)'); veil.addColorStop(1,'rgba(255,255,255,0.10)');
+      x.fillStyle=veil; x.fillRect(0,0,w,h);
+    } else {
+      x.fillStyle='#FBFBFA'; x.fillRect(0,0,w,h);
+      var cols=Math.max(6,Math.round(w/88));
+      for(var i=0;i<cols;i++){
+        for(var j=0;j<3;j++){
+          var cw=w/cols, cx=i*cw, cy=h-(j+1)*(h/3.4);
+          x.globalAlpha=0.05+((i*7+j*31)%10)/100;
+          x.fillStyle=(i+j)%3===0?r.accent:r.wash2;
+          x.fillRect(cx+3,cy,cw-6,h/3.4-6);
+        }
+      }
+      x.globalAlpha=1;
+      figures(x,w,h,Math.max(6,Math.round(w/130)),0.14,r.accent);
+    }
+  }
+
+  /* ---------------- imagery wash ---------------- */
+  function drawWash(){
+    var c=$('#wash'); if(!c) return;
+    var f=fit(c), x=f.x, w=f.w, h=f.h;
+    var hue=+$('#hue').value, spread=+$('#spread').value,
+        fig=+$('#figure').value/100, grain=+$('#grain').value/100, crowd=+$('#crowd').value;
+    $('#hueO').textContent=hue+'°';
+    $('#spreadO').textContent=spread;
+    $('#figureO').textContent=Math.round(fig*100)+'%';
+    $('#grainO').textContent=Math.round(grain*100)+'%';
+    $('#crowdO').textContent=crowd;
+
+    var g=x.createLinearGradient(0,h,w,0);
+    g.addColorStop(0,'hsl('+hue+',62%,26%)');
+    g.addColorStop(0.5,'hsl('+((hue+spread)%360)+',70%,52%)');
+    g.addColorStop(1,'hsl('+((hue+spread*2)%360)+',78%,76%)');
+    x.fillStyle=g; x.fillRect(0,0,w,h);
+
+    figures(x,w,h,crowd,fig*0.75,'rgba(16,8,16,1)');
+
+    // light bands, the thing that makes it read as footage rather than a poster
+    for(var b=0;b<3;b++){
+      var by=h*(0.18+b*0.3), bg=x.createLinearGradient(0,by-h*0.1,0,by+h*0.1);
+      bg.addColorStop(0,'rgba(255,255,255,0)');
+      bg.addColorStop(0.5,'rgba(255,255,255,'+(0.10-b*0.025)+')');
+      bg.addColorStop(1,'rgba(255,255,255,0)');
+      x.fillStyle=bg; x.fillRect(0,by-h*0.1,w,h*0.2);
+    }
+    // bottom scrim so the headline always has contrast
+    var s=x.createLinearGradient(0,h*0.45,0,h);
+    s.addColorStop(0,'rgba(10,6,12,0)'); s.addColorStop(1,'rgba(10,6,12,0.62)');
+    x.fillStyle=s; x.fillRect(0,h*0.45,w,h*0.55);
+
+    if(grain>0){
+      var step=2, a=grain*0.5;
+      for(var yy=0;yy<h;yy+=step) for(var xx=0;xx<w;xx+=step){
+        if(((xx*31+yy*17)%7)!==0) continue;
+        x.fillStyle='rgba(255,255,255,'+(a*(((xx+yy)%5)/5)).toFixed(3)+')';
+        x.fillRect(xx,yy,step,step);
+      }
+    }
+  }
+  ['#hue','#spread','#figure','#grain','#crowd'].forEach(function(s){
+    $(s).addEventListener('input',drawWash);
+  });
+
+  var rt;
+  addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){ drawHero(); drawWash(); },120); });
+
+  applyRoute();
+  drawWash();
+})();
+</script>
+
+</body>
+</html>
